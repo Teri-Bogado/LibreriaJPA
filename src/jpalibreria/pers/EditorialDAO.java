@@ -6,6 +6,7 @@
 package jpalibreria.pers;
 
 import java.util.List;
+import javax.persistence.NoResultException;
 import jpalibreria.ents.Editorial;
 
 /**
@@ -13,11 +14,11 @@ import jpalibreria.ents.Editorial;
  * @author "J"
  */
 public class EditorialDAO extends DAO<Editorial> {
-    
+
     public void guardarEditorial(Editorial ed) {
         guardar(ed);
     }
-    
+
     public void eliminarEditorial(String n) throws Exception {
         try {
             Editorial ed = buscarEditorial(n);
@@ -26,9 +27,9 @@ public class EditorialDAO extends DAO<Editorial> {
             desconectar();
             throw e;
         }
-        
-        
+
     }
+
     public void eliminarEditorial(Long id) throws Exception {
         try {
             Editorial ed = buscarEditorial(id);
@@ -37,11 +38,10 @@ public class EditorialDAO extends DAO<Editorial> {
             desconectar();
             throw e;
         }
-        
-        
+
     }
-    
-    public void editarEditorial(Editorial ed) throws Exception{
+
+    public void editarEditorial(Editorial ed) throws Exception {
         try {
             editar(ed);
         } catch (Exception e) {
@@ -49,15 +49,16 @@ public class EditorialDAO extends DAO<Editorial> {
             throw e;
         }
     }
-    
+
     /**
      * Busca editorial por id
+     *
      * @param id El id de la editorial a buscar.
      * @return Editorial con el id buscado.
-     * @throws Exception 
+     * @throws Exception
      */
-    public Editorial buscarEditorial(Long id) throws Exception{
-        
+    public Editorial buscarEditorial(Long id) throws Exception {
+
         try {
             conectar();
             Editorial ed = (Editorial) EM.createQuery("SELECT e FROM Editorial e WHERE e.id LIKE :id")
@@ -65,34 +66,42 @@ public class EditorialDAO extends DAO<Editorial> {
                     .getSingleResult();
             desconectar();
             return ed;
-            
+
+        } catch (NoResultException NRE) {
+            desconectar();
+            return null;
         } catch (Exception e) {
             desconectar();
             throw e;
         }
-        
+
     }
-    
+
     /**
      * Busca editorial por nombre
+     *
      * @param nombre El nombre de la editorial a buscar.
      * @return Editorial con el nombre buscado.
-     * @throws Exception 
+     * @throws Exception
      */
     public Editorial buscarEditorial(String nombre) throws Exception {
         try {
             conectar();
+            System.out.println("SELECT e FROM Editorial e WHERE e.nombre LIKE CONCAT('%'," + nombre + ",'%')");
             Editorial ed = (Editorial) EM.createQuery("SELECT e FROM Editorial e WHERE e.nombre LIKE CONCAT('%',:nombre,'%')")
                     .setParameter("nombre", nombre)
                     .getSingleResult();
             desconectar();
             return ed;
+        } catch (NoResultException NRE) {
+            desconectar();
+            return null;
         } catch (Exception e) {
             desconectar();
             throw e;
         }
     }
-    
+
     public List<Editorial> listarEditoriales() {
         try {
             conectar();
@@ -105,5 +114,5 @@ public class EditorialDAO extends DAO<Editorial> {
             throw e;
         }
     }
-    
+
 }

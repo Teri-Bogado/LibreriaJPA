@@ -6,6 +6,7 @@
 package jpalibreria.pers;
 
 import java.util.List;
+import javax.persistence.NoResultException;
 import jpalibreria.ents.Libro;
 
 /**
@@ -32,6 +33,9 @@ public class LibroDAO extends DAO<Libro> {
                     .getSingleResult();
             desconectar();
             return l;
+        } catch (NoResultException NRE) {
+            desconectar();
+            return null;
         } catch (Exception e) {
             desconectar();
             throw e;
@@ -47,12 +51,15 @@ public class LibroDAO extends DAO<Libro> {
                     .getSingleResult();
             desconectar();
             return l;
+        } catch (NoResultException NRE) {
+            desconectar();
+            return null;
         } catch (Exception e) {
             desconectar();
             throw e;
         }
     }
-    
+
     public List<Libro> listarLibros() throws Exception {
         try {
             conectar();
@@ -66,7 +73,7 @@ public class LibroDAO extends DAO<Libro> {
         }
     }
 
-    public void eliminarLibro(Long ISBN) throws Exception{
+    public void eliminarLibro(Long ISBN) throws Exception {
         try {
             Libro l = buscarLibro(ISBN);
             eliminar(l);
@@ -75,8 +82,8 @@ public class LibroDAO extends DAO<Libro> {
             throw e;
         }
     }
-    
-    public void eliminarLibro(String titulo) throws Exception{
+
+    public void eliminarLibro(String titulo) throws Exception {
         try {
             Libro l = buscarLibro(titulo);
             eliminar(l);
@@ -85,9 +92,9 @@ public class LibroDAO extends DAO<Libro> {
             throw e;
         }
     }
-    
-    public List<Libro> buscarPorAutor(String str){
-        
+
+    public List<Libro> buscarPorAutor(String str) {
+
         try {
             conectar();
             List<Libro> libros = EM.createQuery("SELECT l from Libro l WHERE l.autor.nombre LIKE CONCAT('%',:nombre,'%')")
@@ -99,11 +106,11 @@ public class LibroDAO extends DAO<Libro> {
             desconectar();
             throw e;
         }
-        
+
     }
-    
-    public List<Libro> buscarPorEditorial(String str){
-        
+
+    public List<Libro> buscarPorEditorial(String str) {
+
         try {
             conectar();
             List<Libro> libros = EM.createQuery("SELECT l from Libro l WHERE l.editorial.nombre LIKE CONCAT('%',:nombre,'%')")
@@ -115,6 +122,6 @@ public class LibroDAO extends DAO<Libro> {
             desconectar();
             throw e;
         }
-        
+
     }
 }
